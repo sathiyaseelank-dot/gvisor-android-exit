@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.pm.ServiceInfo
 import android.content.Context
 import android.content.Intent
 import android.net.VpnService
@@ -40,6 +41,7 @@ class MyVpnService : VpnService() {
     override fun onStartCommand(intent: android.content.Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START -> {
+                // Start foreground service without type for now to avoid permission issues
                 startForeground(NOTIFICATION_ID, createNotification())
                 startTunnel()
             }
