@@ -1,19 +1,19 @@
 package com.celzero
 
-import android.app.ForegroundService
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.net.VpnService
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
-import govpn.GoVpn
+// import govpn.Govpn  // Temporarily disabled due to duplicate classes
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
@@ -61,7 +61,7 @@ class MyVpnService : VpnService() {
         Log.d(TAG, "Stopping VPN")
         vpnThread?.interrupt()
         try {
-            GoVpn.stop()
+            // Govpn.stop()  // Temporarily disabled
             vpnInterface?.close()
             vpnInterface = null
         } catch (e: Exception) {
@@ -87,10 +87,19 @@ class MyVpnService : VpnService() {
                 .establish()
 
             vpnInterface = session
-            val fd = vpnInterface?.fileDescriptor?.asInt() ?: throw IOException("Failed to get file descriptor")
+            val fileDescriptor = vpnInterface?.fileDescriptor ?: throw IOException("Failed to get file descriptor")
+            
+            // Get the file descriptor number using reflection
+            val fdField = fileDescriptor.javaClass.getDeclaredField("fd")
+            fdField.isAccessible = true
+            val fd = fdField.getInt(fileDescriptor)
 
-            Log.d(TAG, "Starting GoVpn with fd: $fd")
-            GoVpn.run(config, fd.toLong()) // Assuming GoVpn.run takes config string and fd
+            Log.d(TAG, "Starting VPN with fd: $fd")
+            // Govpn.run(fd.toLong()) // Temporarily disabled - Start Govpn with file descriptor
+            
+            // TODO: Integrate proper VPN implementation
+            // For now, just keep the VPN interface open
+            Thread.sleep(1000) // Placeholder to keep the service running
 
         } catch (e: Exception) {
             Log.e(TAG, "VPN connection error", e)
@@ -112,7 +121,7 @@ class MyVpnService : VpnService() {
         super.onCreate()
         createNotificationChannel()
         val notification = createNotification()
-        ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, getForegroundServiceType())
+        ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, getServiceForegroundType())
     }
 
     private fun createNotification(): Notification {
@@ -139,9 +148,9 @@ class MyVpnService : VpnService() {
         }
     }
     
-    private fun getForegroundServiceType(): Int {
+    private fun getServiceForegroundType(): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ForegroundService.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
         } else {
             0
         }
