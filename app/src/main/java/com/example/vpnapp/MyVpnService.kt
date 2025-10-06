@@ -1,9 +1,17 @@
 package com.example.vpnapp
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.net.VpnService
+import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import com.celzero.firestack.intra.Bridge
 import com.celzero.firestack.intra.DefaultDNS
 import com.celzero.firestack.intra.Intra
@@ -15,6 +23,8 @@ class MyVpnService : VpnService() {
     companion object {
         const val ACTION_START = "START"
         const val ACTION_STOP = "STOP"
+        private const val NOTIFICATION_ID = 1
+        private const val CHANNEL_ID = "VPN_SERVICE_CHANNEL"
     }
 
     private var tunInterface: ParcelFileDescriptor? = null
@@ -22,12 +32,47 @@ class MyVpnService : VpnService() {
     private var bridge: Bridge? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
+    override fun onCreate() {
+        super.onCreate()
+        createNotificationChannel()
+    }
+
     override fun onStartCommand(intent: android.content.Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> startTunnel()
+            ACTION_START -> {
+                startForeground(NOTIFICATION_ID, createNotification())
+                startTunnel()
+            }
             ACTION_STOP -> stopTunnel()
         }
         return START_STICKY
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "VPN Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification(): Notification {
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent, 
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("VPN Active")
+            .setContentText("Firestack VPN is running")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentIntent(pendingIntent)
+            .build()
     }
 
     private fun startTunnel() {
@@ -38,7 +83,12 @@ class MyVpnService : VpnService() {
             .setMtu(1500)
 
         tunInterface = builder.establish()
-        val fd = tunInterface?.fd ?: return
+        val fileDescriptor = tunInterface?.fileDescriptor ?: return
+        
+        // Get the file descriptor number using reflection
+        val fdField = fileDescriptor.javaClass.getDeclaredField("fd")
+        fdField.isAccessible = true
+        val fd = fdField.getInt(fileDescriptor)
         val mtu = 1500L
 
         scope.launch {
@@ -65,6 +115,7 @@ class MyVpnService : VpnService() {
             tunnel?.disconnect()
             tunInterface?.close()
             bridge = null
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
             stopSelf()
         } catch (e: Exception) {
             Log.w("VPN", "Error stopping tunnel: ${e.message}")

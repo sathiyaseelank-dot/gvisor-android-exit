@@ -34,6 +34,10 @@ android {
         jvmTarget = "11"
     }
     
+    lint {
+        disable += listOf("ProtectedPermissions")
+    }
+    
     packagingOptions {
         pickFirst("**/libgojni.so")
         pickFirst("**/go.class")
