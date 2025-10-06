@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">vpnapp</string>
+    <string name="start_vpn">Start VPN</string>
+    <string name="stop_vpn">STOP VPN</string>
+</resources>
