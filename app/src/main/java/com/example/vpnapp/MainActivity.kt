@@ -1,39 +1,41 @@
 package com.example.vpnapp
 
-import android.app.Activity
-import android.content.Intent
-import android.net.VpnService
 import android.os.Bundle
-import android.widget.Button
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import android.util.Log // Import Log
+import android.widget.Button // Import Button
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity" // Define a TAG for logging
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val startButton = findViewById<Button>(R.id.startButton)
-        startButton.setOnClickListener {
-            val intent = VpnService.prepare(this)
-            if (intent != null) {
-                startActivityForResult(intent, 0)
-            } else {
-                onActivityResult(0, RESULT_OK, null)
-            }
-        }
-        val stopButton = findViewById<Button>(R.id.stopButton)
-        stopButton.setOnClickListener {
-            val intent = Intent(this, MyVpnService::class.java)
-            intent.action = MyVpnService.ACTION_STOP
-            startService(intent)
-        }
-    }
+        // Find buttons by their IDs
+        val startButton: Button = findViewById(R.id.startButton)
+        val stopButton: Button = findViewById(R.id.stopButton)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK) {
-            val intent = Intent(this, MyVpnService::class.java)
-            intent.action = MyVpnService.ACTION_START
-            startService(intent)
+        // Set OnClickListener for startButton
+        startButton.setOnClickListener {
+            Log.d(TAG, "Start button clicked!")
+            // Add your VPN start logic here
         }
-        super.onActivityResult(requestCode, resultCode, data)
+
+        // Set OnClickListener for stopButton
+        stopButton.setOnClickListener {
+            Log.d(TAG, "Stop button clicked!")
+            // Add your VPN stop logic here
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
     }
 }
