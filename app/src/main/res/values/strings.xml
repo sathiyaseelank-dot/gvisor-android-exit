@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">vpnapp</string>
     <string name="start_vpn">Start VPN</string>
-    <string name="stop_vpn">STOP VPN</string>
+    <string name="stop_vpn">Stop VPN</string>
     <string name="start_exit_node">Start Exit Node</string>
+    <string name="wireguard_key_management">WireGuard Key Management</string>
+    <string name="private_key_hint">Private Key</string>
+    <string name="generate_public_key">Generate Public Key</string>
+    <string name="public_key_output">Public Key: </string>
+    <string name="copy_public_key">Copy Public Key</string>
+    <string name="ip_address_output">IP Address: 10.8.0.1/24</string>
+    <string name="copy_ip_address">Copy IP Address</string>
 </resources>

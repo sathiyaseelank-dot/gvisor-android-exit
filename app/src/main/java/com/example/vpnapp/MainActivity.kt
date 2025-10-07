@@ -13,6 +13,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 
+import com.google.android.material.button.MaterialButton
+
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
@@ -39,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Find buttons by their IDs
-        val startButton: Button = findViewById(R.id.startButton)
-        val stopButton: Button = findViewById(R.id.stopButton)
-        val startExitNodeButton: Button = findViewById(R.id.startExitNodeButton)
+        val startButton: MaterialButton = findViewById(R.id.startButton)
+        val stopButton: MaterialButton = findViewById(R.id.stopButton)
+        val startExitNodeButton: MaterialButton = findViewById(R.id.startExitNodeButton)
 
         // Set OnClickListener for startButton
         startButton.setOnClickListener {

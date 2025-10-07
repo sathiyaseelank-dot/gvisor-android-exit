@@ -5,34 +5,205 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <!-- Background Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_margin="32dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/startButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/start_vpn" />
+            android:orientation="vertical"
+            android:padding="32dp">
 
-        <Button
-            android:id="@+id/stopButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/stop_vpn" />
+            <!-- Header -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="VPN Controller"
+                android:textAlignment="center"
+                android:textColor="@color/primary_color"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp" />
 
-        <Button
-            android:id="@+id/startExitNodeButton"
+            <!-- Start VPN Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/startButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start VPN"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="16dp"
+                app:icon="@drawable/ic_play_arrow"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:backgroundTint="@color/primary_color"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.Material3.Button" />
+
+            <!-- Stop VPN Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stopButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stop VPN"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="16dp"
+                app:icon="@drawable/ic_stop"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:backgroundTint="@color/error_color"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.Material3.Button" />
+
+            <!-- Start Exit Node Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/startExitNodeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Exit Node"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="16dp"
+                app:icon="@drawable/ic_node"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:backgroundTint="@color/secondary_color"
+                style="@style/Widget.Material3.Button" />
+
+            <!-- WireGuard Key Management -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="WireGuard Key Management"
+                android:textAlignment="center"
+                android:textColor="@color/primary_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Private Key"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/privateKeyInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:lines="2"
+                    android:gravity="top" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/generatePublicKeyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Generate Public Key"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="12dp"
+                app:backgroundTint="@color/primary_color"
+                android:layout_marginBottom="8dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+            <TextView
+                android:id="@+id/publicKeyOutput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Public Key: "
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:background="@drawable/text_output_background" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/copyPublicKeyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Copy Public Key"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="12dp"
+                app:backgroundTint="@color/secondary_color"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+            <!-- IP Address Copy -->
+            <TextView
+                android:id="@+id/ipAddressOutput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="IP Address: 10.8.0.1/24"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:background="@drawable/text_output_background" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/copyIpAddressButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Copy IP Address"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="12dp"
+                app:backgroundTint="@color/secondary_color"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Status Indicator -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/status_background"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp">
+
+        <View
+            android:id="@+id/statusIndicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/circle_offline"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/statusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start_exit_node" />
+            android:text="Offline"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
