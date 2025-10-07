@@ -25,6 +25,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val vpnPermissionLauncherForExitNode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            startExitNodeVpnService()
+        } else {
+            Toast.makeText(this, "VPN permission for exit node denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -33,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         // Find buttons by their IDs
         val startButton: Button = findViewById(R.id.startButton)
         val stopButton: Button = findViewById(R.id.stopButton)
+        val startExitNodeButton: Button = findViewById(R.id.startExitNodeButton)
 
         // Set OnClickListener for startButton
         startButton.setOnClickListener {
@@ -44,6 +53,11 @@ class MainActivity : AppCompatActivity() {
         stopButton.setOnClickListener {
             Log.d(TAG, "Stop button clicked!")
             stopVpnService()
+        }
+
+        startExitNodeButton.setOnClickListener {
+            Log.d(TAG, "Start Exit Node button clicked!")
+            requestVpnPermissionForExitNode()
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -86,6 +100,29 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to stop VPN service: ${e.message}", e)
             Toast.makeText(this, "Failed to stop VPN", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun requestVpnPermissionForExitNode() {
+        val vpnIntent = VpnService.prepare(this)
+        if (vpnIntent != null) {
+            vpnPermissionLauncherForExitNode.launch(vpnIntent)
+        } else {
+            // Permission already granted
+            startExitNodeVpnService()
+        }
+    }
+
+    private fun startExitNodeVpnService() {
+        try {
+            val intent = Intent(this, WireGuardExitNodeService::class.java)
+            intent.action = MyVpnService.ACTION_START
+            startService(intent)
+            Toast.makeText(this, "Starting Exit Node VPN service...", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "Exit Node VPN service started")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start Exit Node VPN service: ${e.message}", e)
+            Toast.makeText(this, "Failed to start Exit Node VPN", Toast.LENGTH_SHORT).show()
         }
     }
 }

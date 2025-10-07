@@ -38,6 +38,16 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".WireGuardExitNodeService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="connectedDevice"            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

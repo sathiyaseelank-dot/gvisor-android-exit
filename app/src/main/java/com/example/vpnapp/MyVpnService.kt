@@ -20,18 +20,18 @@ import com.celzero.firestack.intra.Tunnel
 import com.celzero.firestack.settings.Settings
 import kotlinx.coroutines.*
 
-class MyVpnService : VpnService() {
+open class MyVpnService : VpnService() {
     companion object {
         const val ACTION_START = "START"
         const val ACTION_STOP = "STOP"
-        private const val NOTIFICATION_ID = 1
+        const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "VPN_SERVICE_CHANNEL"
     }
 
-    private var tunInterface: ParcelFileDescriptor? = null
-    private var tunnel: Tunnel? = null
-    private var bridge: Bridge? = null
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    var tunInterface: ParcelFileDescriptor? = null
+    var tunnel: Tunnel? = null
+    var bridge: Bridge? = null
+    val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onCreate() {
         super.onCreate()
@@ -62,7 +62,7 @@ class MyVpnService : VpnService() {
         }
     }
 
-    private fun createNotification(): Notification {
+    fun createNotification(): Notification {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent, 
@@ -108,7 +108,7 @@ class MyVpnService : VpnService() {
         }
     }
 
-    private fun stopTunnel() {
+    fun stopTunnel() {
         try {
             Log.i("VPN", "Stopping Firestack tunnel")
             tunnel?.disconnect()

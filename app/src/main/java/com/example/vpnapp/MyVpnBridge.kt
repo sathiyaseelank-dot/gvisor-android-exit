@@ -7,7 +7,7 @@ import com.celzero.firestack.intra.Mark
 import com.celzero.firestack.intra.PreMark
 import com.celzero.firestack.backend.*
 
-class MyVpnBridge(private val vpnService: VpnService) : Bridge {
+open class MyVpnBridge(private val vpnService: VpnService) : Bridge {
 
     // ------------------------- Controller / Socket Protection -------------------------
     override fun bind4(who: String?, addrport: String?, fd: Long) {
