@@ -87,10 +87,7 @@ class MyVpnService : VpnService() {
         tunInterface = builder.establish()
         val fileDescriptor = tunInterface?.fileDescriptor ?: return
         
-        // Get the file descriptor number using reflection
-        val fdField = fileDescriptor.javaClass.getDeclaredField("fd")
-        fdField.isAccessible = true
-        val fd = fdField.getInt(fileDescriptor)
+        val fd = tunInterface?.getFd() ?: return
         val mtu = 1500L
 
         scope.launch {
