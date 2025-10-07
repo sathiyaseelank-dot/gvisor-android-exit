@@ -94,8 +94,8 @@ class MyVpnService : VpnService() {
             try {
                 val bridge = MyVpnBridge(this@MyVpnService)
                 val defaultDNS = Intra.newBuiltinDefaultDNS() // Correct way to get DefaultDNS
-                val session = "firestack"
-                val resolver = "1.1.1.1"
+                val session = "10.0.0.2/24"
+                val resolver = "1.1.1.1:53"
                 val engine = Settings.Ns46
 
                 tunnel = Intra.newTunnel(fd.toLong(), mtu, session, resolver, defaultDNS, bridge)
