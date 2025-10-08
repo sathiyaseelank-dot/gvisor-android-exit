@@ -10,4 +10,5 @@
     <string name="copy_public_key">Copy Public Key</string>
     <string name="ip_address_output">IP Address: 10.8.0.1/24</string>
     <string name="copy_ip_address">Copy IP Address</string>
+    <string name="app_name">vpnapp</string>
 </resources>
